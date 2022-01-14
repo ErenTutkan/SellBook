@@ -10,6 +10,6 @@ class Book extends Model
     use HasFactory;
     protected $fillable=['name','description','image','category_id'];
     public function category(){
-        return $this.$this->hasOne(Category::class,'category_id','id');
+        return $this->hasOne(Category::class,'id','category_id');
     }
 }

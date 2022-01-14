@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Helper\mHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Book;
 use Illuminate\Http\Request;
@@ -11,7 +12,7 @@ class BookController extends Controller
 
     public function index()
     {
-        $books=Book::all()->toArray();
+        $books=Book::with('category')->get()->toArray();
         return response()->json(array_reverse($books),200);
     }
 
@@ -23,25 +24,24 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
-        Book::create([
-            'name'=>$request->input('name'),
-            'description'=>$request->input('description'),
-            'image'=>$request->input('image'),
-            'category_id'=>$request->input('category_id')
+        $data=$request->validate([
+           'name'=>['required','string'],
+            'image'=>['image'],
+            'description'=>['required','string'],
+            'category_id'=>['required']
         ]);
+        $name=mHelper::UploadImage($request,'book');
+        $data['image']=$name;
+        Book::create($data);
+        return response()->json(['msg'=>'Successfully']);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function show($id)
     {
         if(Book::where('id',$id)->count()!=0){
             $book=Book::where('id',$id)->first();
-            return $book;
+            return response()->json($book);
 
         }else{
             return response()->json(['msg'=>'Error']);
@@ -59,11 +59,19 @@ class BookController extends Controller
     {
         if(Book::where('id',$id)->count()!=0){
             $book=Book::where('id',$id)->first();
-            $book->update([
-                'name'=>$request->input('name'),
-                'description'=>$request->input('description'),
-                'category_id'=>$request->input('category_id')
+            $data=$request->validate([
+                'name'=>['required','string'],
+                'description'=>['required','string'],
+                'category_id'=>['required']
             ]);
+            if($request->file('image')!=null){
+                $name=mHelper::UploadImage($request,'book');
+                $data['image']=$name;
+            }else{
+                $data['image']=$book[0]['image'];
+            }
+            $book->update($data);
+            return response()->json(['msg'=>'Update Succesfully']);
 
         }else{
             return response()->json(['msg'=>'hata']);

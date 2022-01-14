@@ -16,6 +16,14 @@
                         <li>
                             <router-link to="/" exact class="nav-link">Home</router-link>
                         </li>
+                        <li>
+                            <router-link to="/booklist" exact class="nav-link">Book</router-link>
+                        </li>
+                        <li>
+                            <router-link to="/categorylist" exact class="nav-link">Category</router-link>
+
+                        </li>
+                        <li><router-link to="/userlist" exact class="nav-link">User</router-link></li>
 
                     </ul>
 

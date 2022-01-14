@@ -29,7 +29,6 @@ class CategoryController extends Controller
     public function show($id)
     {
         $category=Category::where('id',$id)->first();
-
         return $category;
 
     }
